@@ -1,5 +1,6 @@
-// The exam start date is kept here so it is easy to confirm or change.
-const EXAM_DATE = new Date(2026, 9, 22, 0, 0, 0); // October 22, 2026 (local time)
+// Exam dates are kept together here so they are easy to confirm or change.
+const EXAM_DATE = new Date(2026, 9, 22, 0, 0, 0); // Exams start October 22, 2026 (local time)
+const EXAM_END_DATE = new Date(2026, 10, 4, 0, 0, 0); // Exams end November 4, 2026 (local time)
 const STORAGE = { days: "closer-home-days-v1", tally: "closer-home-tally-v1", tallyDate: "closer-home-tally-date-v1" };
 
 // Edit this array to change the daily encouragement cards.
@@ -18,11 +19,13 @@ const DAY_MS = 86400000;
 const today = new Date();
 today.setHours(0, 0, 0, 0);
 const daysLeft = Math.max(0, Math.ceil((EXAM_DATE - today) / DAY_MS));
-const studyDays = Math.max(0, Math.ceil((EXAM_DATE - today) / DAY_MS));
+// Include today and the final exam date in the path to home.
+const homeDays = Math.max(0, Math.ceil((EXAM_END_DATE - today) / DAY_MS) + (today <= EXAM_END_DATE ? 1 : 0));
+const studyDays = homeDays;
 document.querySelector("#days-left").textContent = daysLeft;
-document.querySelector("#home-days").textContent = daysLeft;
+document.querySelector("#home-days").textContent = homeDays;
 document.querySelector("#progress-caption").textContent = `${studyDays} days of studying. Then a lifetime of being done with this particular stress.`;
-document.querySelector("#date-note").textContent = daysLeft === 0 ? "October 22nd is here — you've made it." : "until October 22nd";
+document.querySelector("#date-note").textContent = daysLeft > 0 ? "until exams start on October 22nd" : today <= EXAM_END_DATE ? "Exams are underway — November 4th is the finish line." : "Exams are over. You made it.";
 
 function readDays() { try { return JSON.parse(localStorage.getItem(STORAGE.days) || "[]"); } catch { return []; } }
 function localDateKey(date) { return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`; }
